@@ -99,6 +99,8 @@ export default class MineSweeper extends Component<Props, State> {
 
     spread(row, col, game)
 
+    game.blockMap = [...blockMap]
+
     if (game.flippedNum === rowNum * colNum - bombNum) {
       game.status = 'completed'
     }
@@ -117,6 +119,8 @@ export default class MineSweeper extends Component<Props, State> {
 
     block.isMarked = !block.isMarked
     game.markedNum += block.isMarked ? 1 : -1
+
+    game.blockMap = [...blockMap]
 
     this.forceUpdate()
   }
@@ -189,8 +193,9 @@ export default class MineSweeper extends Component<Props, State> {
 
   renderGrid() {
     const { back, blank, mark, bomb, boom, rowNum, colNum } = this.innerProps
-    const { game } = this.state
-    const { blockMap, status } = game
+    const {
+      game: { blockMap, status },
+    } = this.state
 
     return (
       <Grid

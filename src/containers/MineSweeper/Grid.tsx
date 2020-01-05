@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { PureComponent } from 'react'
 import { createPropsGetter, createDefaultProps } from 'create-props-getter'
 import Block from './Block'
 import { BlockMap } from './initGame'
@@ -6,18 +6,17 @@ import noop from '../../utils/noop'
 
 type Props = {
   blockMap?: BlockMap
+  back: string
+  blank: string
+  mark: string
+  bomb: string
+  boom: string
+  rowNum: number
+  colNum: number
+  status: 'ongoing' | 'completed' | 'failed'
 } & Partial<typeof defaultProps>
 
 const defaultProps = createDefaultProps({
-  back: '⬜',
-  blank: '◻️',
-  mark: '🚩',
-  bomb: '💣',
-  boom: '💥',
-  rowNum: 10,
-  colNum: 10,
-  bombNum: 10,
-  status: 'ongoing' as 'ongoing' | 'completed' | 'failed',
   onMouseUp: noop as (
     row: number,
     col: number,
@@ -46,79 +45,83 @@ const classBlock = 'mine-sweeper'
 
 const numbers = ['', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣']
 
-const Grid: React.FC<Props> = (props) => {
-  const {
-    back,
-    blank,
-    mark,
-    bomb,
-    boom,
-    rowNum,
-    colNum,
-    blockMap,
-    status,
-    onMouseUp: handleMouseUp,
-    onContextMenu: handleContextMenu,
-    onMouseEnter: handleMouseEnter,
-    onMouseLeave: handleMouseLeave,
-  } = getProps(props)
-  const typeMap: any = {
-    ...numbers,
-    [-2]: boom,
-    [-1]: bomb,
-    0: blank,
-  }
-  const rows = []
-
-  if (!blockMap) {
-    // not starting
-    return <div></div>
+export default class Grid extends PureComponent<Props> {
+  get innerProps() {
+    return getProps(this.props)
   }
 
-  for (let row = 0; row <= rowNum - 1; ++row) {
-    const blocks = []
+  render() {
+    const {
+      back,
+      blank,
+      mark,
+      bomb,
+      boom,
+      rowNum,
+      colNum,
+      blockMap,
+      status,
+      onMouseUp: handleMouseUp,
+      onContextMenu: handleContextMenu,
+      onMouseEnter: handleMouseEnter,
+      onMouseLeave: handleMouseLeave,
+    } = this.innerProps
+    const typeMap: any = {
+      ...numbers,
+      [-2]: boom,
+      [-1]: bomb,
+      0: blank,
+    }
+    const rows = []
 
-    for (let col = 0; col <= colNum - 1; ++col) {
-      const block = blockMap[row * colNum + col]
+    console.log('render')
 
-      if (status !== 'ongoing') {
-        block.isFlipped = true
+    if (!blockMap) {
+      // not starting
+      return <div></div>
+    }
 
-        if (status === 'completed') {
-          if (block.type === -1) {
-            block.isMarked = true
+    for (let row = 0; row <= rowNum - 1; ++row) {
+      const blocks = []
+
+      for (let col = 0; col <= colNum - 1; ++col) {
+        const block = blockMap[row * colNum + col]
+
+        if (status !== 'ongoing') {
+          block.isFlipped = true
+
+          if (status === 'completed') {
+            if (block.type === -1) {
+              block.isMarked = true
+            }
+          } else {
+            block.isMarked = false
           }
-        } else {
-          block.isMarked = false
         }
+
+        blocks.push(
+          <Block
+            key={`${row}-${col}`}
+            back={back}
+            front={typeMap[block.type]}
+            mark={mark}
+            isMarked={block.isMarked}
+            isFlipped={block.isFlipped}
+            onMouseUp={handleMouseUp.bind(undefined, row, col)}
+            onContextMenu={handleContextMenu.bind(undefined, row, col)}
+            onMouseEnter={handleMouseEnter.bind(undefined, row, col)}
+            onMouseLeave={handleMouseLeave.bind(undefined, row, col)}
+          />,
+        )
       }
 
-      blocks.push(
-        <Block
-          key={`${row}-${col}`}
-          back={back}
-          front={typeMap[block.type]}
-          mark={mark}
-          isMarked={block.isMarked}
-          isFlipped={block.isFlipped}
-          onMouseUp={handleMouseUp.bind(undefined, row, col)}
-          onContextMenu={handleContextMenu.bind(undefined, row, col)}
-          onMouseEnter={handleMouseEnter.bind(undefined, row, col)}
-          onMouseLeave={handleMouseLeave.bind(undefined, row, col)}
-        />,
+      rows.push(
+        <div key={`${row}`} className={`${classBlock}__row`}>
+          {blocks}
+        </div>,
       )
     }
 
-    rows.push(
-      <div key={`${row}`} className={`${classBlock}__row`}>
-        {blocks}
-      </div>,
-    )
+    return <div className={`${classBlock}__grid`}>{rows}</div>
   }
-
-  return <div className={`${classBlock}__grid`}>{rows}</div>
 }
-
-Grid.defaultProps = defaultProps
-
-export default Grid
