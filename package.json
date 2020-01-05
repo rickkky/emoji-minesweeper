@@ -2,12 +2,15 @@
   "name": "emoji-minesweeper--react",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://rickkky.github.io/emoji-minesweeper--react",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "commit:cz": "git-cz"
+    "commit:cz": "git-cz",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "husky": {
     "hooks": {
@@ -40,6 +43,7 @@
     "@commitlint/config-conventional": "^8.2.0",
     "commitizen": "^4.0.3",
     "cz-conventional-changelog": "^3.0.2",
+    "gh-pages": "^2.1.1",
     "husky": "^3.1.0",
     "prettier": "1.19.1",
     "pretty-quick": "^2.0.1"
