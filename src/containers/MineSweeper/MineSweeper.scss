@@ -1,0 +1,42 @@
+@import './variables.scss';
+
+.#{$class-block} {
+  display: inline-block;
+  padding: 10px;
+  border: 2px solid #e0e0e0;
+  border-radius: 3px;
+  user-select: none;
+
+  .#{$class-block}__status-bar {
+    width: 100%;
+    padding: 5px;
+    margin: 0 0 5px 0;
+    border: 1px solid #e0e0e0;
+    border-radius: 3px;
+    text-align: center;
+    box-sizing: border-box;
+    cursor: pointer;
+
+    span {
+      display: inline;
+    }
+
+    .#{$class-block}__status--hovered {
+      display: none;
+    }
+
+    &:hover {
+      span {
+        display: none;
+      }
+
+      .#{$class-block}__status--hovered {
+        display: inline;
+      }
+    }
+  }
+
+  .#{$class-block}__row {
+    height: $block__size;
+  }
+}
