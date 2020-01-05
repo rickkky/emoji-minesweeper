@@ -97,6 +97,7 @@ export default function initGame(
     blockMap: blockMap as Block[],
     flippedNum: 0,
     markedNum: 0,
+    stepNum: 0,
     status: 'ongoing' as 'ongoing' | 'completed' | 'failed',
   }
 }

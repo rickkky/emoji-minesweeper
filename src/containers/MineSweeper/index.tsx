@@ -76,14 +76,21 @@ export default class MineSweeper extends Component<Props, State> {
     const { rowNum, colNum, bombNum, blockMap } = game
     const block = blockMap[row * colNum + col]
 
-    if (
-      game.status !== 'ongoing' ||
-      block.isFlipped ||
-      block.isMarked ||
-      e.button !== 0
-    ) {
+    if (game.status !== 'ongoing' || block.isFlipped || block.isMarked) {
       return
     }
+
+    // reset face
+    this.setState({
+      isFrigthened: false,
+    })
+
+    // quit if not left button
+    if (e.button !== 0) {
+      return
+    }
+
+    game.stepNum += 1
 
     if (block.type === -1) {
       block.type = -2
@@ -98,9 +105,6 @@ export default class MineSweeper extends Component<Props, State> {
       game.status = 'completed'
     }
 
-    this.setState({
-      isFrigthened: false,
-    })
     this.forceUpdate()
   }
 
@@ -243,6 +247,27 @@ export default class MineSweeper extends Component<Props, State> {
     return <div className={`${classBlock}__grid`}>{rows}</div>
   }
 
+  renderFooter() {
+    const { game } = this.state
+    const { markedNum, stepNum } = game
+    const { bombNum } = this.innerProps
+
+    return (
+      <div className={`${classBlock}__footer`}>
+        <div className={`${classBlock}__bomb-counter`}>
+          <span>
+            {bombNum - markedNum} / {bombNum}
+          </span>
+          <span>BOMBS</span>
+        </div>
+        <div className={`${classBlock}__step-counter`}>
+          <span>{stepNum}</span>
+          <span>STEPS</span>
+        </div>
+      </div>
+    )
+  }
+
   render() {
     return (
       <div
@@ -251,6 +276,7 @@ export default class MineSweeper extends Component<Props, State> {
       >
         {this.renderHeader()}
         {this.renderGrid()}
+        {this.renderFooter()}
       </div>
     )
   }

@@ -49,7 +49,7 @@
 
   .#{$class-block}__checkbox--checked {
     &:hover .#{$class-block}__checkbox__inner {
-      font-size: 16px;
+      font-size: $block__font-size;
     }
 
     .#{$class-block}__checkbox__input {
