@@ -9,6 +9,8 @@ type Props = {
   mark: string
   onMouseUp?: (e: React.MouseEvent<HTMLSpanElement>) => void
   onContextMenu?: (e: React.MouseEvent<HTMLSpanElement>) => void
+  onMouseEnter?: (e: React.MouseEvent<HTMLSpanElement>) => void
+  onMouseLeave?: (e: React.MouseEvent<HTMLSpanElement>) => void
 } & Partial<typeof defaultProps>
 
 const defaultProps = createDefaultProps({
@@ -27,6 +29,8 @@ const GameBlock: React.FC<Props> = (props) => {
     mark,
     onMouseUp: handleMouseUp,
     onContextMenu: handleContextMenu,
+    onMouseEnter: handleMouseEnter,
+    onMouseLeave: handleMouseLeave,
   } = getProps(props)
 
   return (
@@ -34,6 +38,8 @@ const GameBlock: React.FC<Props> = (props) => {
       className='mine-sweeper__block'
       onMouseUp={handleMouseUp}
       onContextMenu={handleContextMenu}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       <Checkbox
         classBlock='mine-sweeper__checkbox'

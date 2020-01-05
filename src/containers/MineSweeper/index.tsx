@@ -7,6 +7,7 @@ import spread from './spread'
 
 interface State {
   game: Game
+  isFrigthened: boolean
 }
 
 type Props = {} & Partial<typeof defaultProps>
@@ -20,6 +21,7 @@ const defaultProps = createDefaultProps({
   ongoing: '😀',
   completed: '😎',
   failed: '😵',
+  frightened: '😬',
   hovered: '😳',
   rowNum: 10,
   colNum: 10,
@@ -42,6 +44,7 @@ export default class MineSweeper extends Component<Props, State> {
 
     this.state = {
       game: initGame(rowNum, colNum, bombNum),
+      isFrigthened: false,
     }
   }
 
@@ -70,23 +73,15 @@ export default class MineSweeper extends Component<Props, State> {
 
   handleBlockMouseUp = (row: number, col: number, e: React.MouseEvent) => {
     const { game } = this.state
-
-    if (game.status !== 'ongoing') {
-      return
-    }
-
-    if (e.button === 0) {
-      this.handleBlockLeftMouseUp(row, col, e)
-    }
-  }
-
-  handleBlockLeftMouseUp = (row: number, col: number, e: React.MouseEvent) => {
-    const { game } = this.state
     const { rowNum, colNum, bombNum, blockMap } = game
-    const index = row * colNum + col
-    const block = blockMap[index]
+    const block = blockMap[row * colNum + col]
 
-    if (block.isFlipped || block.isMarked) {
+    if (
+      game.status !== 'ongoing' ||
+      block.isFlipped ||
+      block.isMarked ||
+      e.button !== 0
+    ) {
       return
     }
 
@@ -103,16 +98,18 @@ export default class MineSweeper extends Component<Props, State> {
       game.status = 'completed'
     }
 
+    this.setState({
+      isFrigthened: false,
+    })
     this.forceUpdate()
   }
 
   handleBlockContextMenu = (row: number, col: number, e: React.MouseEvent) => {
     const { game } = this.state
     const { colNum, blockMap } = game
-    const index = row * colNum + col
-    const block = blockMap[index]
+    const block = blockMap[row * colNum + col]
 
-    if (block.isFlipped) {
+    if (game.status !== 'ongoing' || block.isFlipped) {
       return
     }
 
@@ -122,12 +119,32 @@ export default class MineSweeper extends Component<Props, State> {
     this.forceUpdate()
   }
 
+  handleBlockMouseEnter = (row: number, col: number, e: React.MouseEvent) => {
+    const { game } = this.state
+    const { colNum, blockMap } = game
+    const block = blockMap[row * colNum + col]
+
+    if (block.isFlipped || block.isMarked) {
+      return
+    }
+
+    this.setState({
+      isFrigthened: true,
+    })
+  }
+
+  handleBlockMouseLeave = (row: number, col: number, e: React.MouseEvent) => {
+    this.setState({
+      isFrigthened: false,
+    })
+  }
+
   get innerProps() {
     return getProps(this.props)
   }
 
-  renderStatusBar() {
-    const { game } = this.state
+  renderHeader() {
+    const { game, isFrigthened } = this.state
     const { status } = game
     const {
       rowNum,
@@ -136,24 +153,29 @@ export default class MineSweeper extends Component<Props, State> {
       ongoing,
       completed,
       failed,
+      frightened,
       hovered,
     } = this.innerProps
-    let emoji = ''
+    let face = ''
 
     if (status === 'completed') {
-      emoji = completed
+      face = completed
     } else if (status === 'failed') {
-      emoji = failed
+      face = failed
     } else {
-      emoji = ongoing
+      face = ongoing
+
+      if (isFrigthened) {
+        face = frightened
+      }
     }
 
     return (
       <div
-        className={`${classBlock}__status-bar`}
+        className={`${classBlock}__header`}
         onClick={() => this.handleInit(rowNum, colNum, bombNum)}
       >
-        <span className={`${classBlock}__status`}>{emoji}</span>
+        <span className={`${classBlock}__status`}>{face}</span>
         <span
           className={`${classBlock}__status ${classBlock}__status--hovered`}
         >
@@ -181,8 +203,7 @@ export default class MineSweeper extends Component<Props, State> {
       const blocks = []
 
       for (let col = 0; col <= colNum - 1; ++col) {
-        const index = row * colNum + col
-        const block = blockMap[index]
+        const block = blockMap[row * colNum + col]
 
         if (isEnded) {
           block.isFlipped = true
@@ -206,6 +227,8 @@ export default class MineSweeper extends Component<Props, State> {
             isFlipped={block.isFlipped}
             onMouseUp={this.handleBlockMouseUp.bind(this, row, col)}
             onContextMenu={this.handleBlockContextMenu.bind(this, row, col)}
+            onMouseEnter={this.handleBlockMouseEnter.bind(this, row, col)}
+            onMouseLeave={this.handleBlockMouseLeave.bind(this, row, col)}
           />,
         )
       }
@@ -226,7 +249,7 @@ export default class MineSweeper extends Component<Props, State> {
         className={`${classBlock}`}
         onContextMenu={(e) => e.preventDefault()}
       >
-        {this.renderStatusBar()}
+        {this.renderHeader()}
         {this.renderGrid()}
       </div>
     )
