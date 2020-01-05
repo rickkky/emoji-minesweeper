@@ -1,10 +1,12 @@
 type BlockType = -2 | -1 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
 
-interface Block {
+interface BlockState {
   type: BlockType
   isMarked: boolean
   isFlipped: boolean
 }
+
+export type BlockMap = BlockState[]
 
 export type Game = ReturnType<typeof initGame>
 
@@ -94,7 +96,7 @@ export default function initGame(
     colNum,
     bombNum,
     bombMap,
-    blockMap: blockMap as Block[],
+    blockMap: blockMap as BlockMap,
     flippedNum: 0,
     markedNum: 0,
     stepNum: 0,
