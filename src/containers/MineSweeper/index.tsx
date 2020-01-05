@@ -76,13 +76,11 @@ export default class MineSweeper extends Component<Props, State> {
     }
 
     if (e.button === 0) {
-      this.handleBlockLeftClick(row, col, e)
-    } else if (e.button === 2) {
-      this.handleBlockRightClick(row, col, e)
+      this.handleBlockLeftMouseUp(row, col, e)
     }
   }
 
-  handleBlockLeftClick = (row: number, col: number, e: React.MouseEvent) => {
+  handleBlockLeftMouseUp = (row: number, col: number, e: React.MouseEvent) => {
     const { game } = this.state
     const { rowNum, colNum, bombNum, blockMap } = game
     const index = row * colNum + col
@@ -108,7 +106,7 @@ export default class MineSweeper extends Component<Props, State> {
     this.forceUpdate()
   }
 
-  handleBlockRightClick = (row: number, col: number, e: React.MouseEvent) => {
+  handleBlockContextMenu = (row: number, col: number, e: React.MouseEvent) => {
     const { game } = this.state
     const { colNum, blockMap } = game
     const index = row * colNum + col
@@ -207,6 +205,7 @@ export default class MineSweeper extends Component<Props, State> {
             isMarked={block.isMarked}
             isFlipped={block.isFlipped}
             onMouseUp={this.handleBlockMouseUp.bind(this, row, col)}
+            onContextMenu={this.handleBlockContextMenu.bind(this, row, col)}
           />,
         )
       }
@@ -223,7 +222,10 @@ export default class MineSweeper extends Component<Props, State> {
 
   render() {
     return (
-      <div className={`${classBlock}`}>
+      <div
+        className={`${classBlock}`}
+        onContextMenu={(e) => e.preventDefault()}
+      >
         {this.renderStatusBar()}
         {this.renderGrid()}
       </div>
