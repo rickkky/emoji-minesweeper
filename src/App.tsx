@@ -1,11 +1,11 @@
 import React from 'react'
 import './App.css'
-import MineSweeper from './containers/MineSweeper'
+import Minesweeper from './containers/Minesweeper'
 
 const App: React.FC = () => {
   return (
     <div className='app'>
-      <MineSweeper />
+      <Minesweeper />
     </div>
   )
 }

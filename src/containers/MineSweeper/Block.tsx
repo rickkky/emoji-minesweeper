@@ -1,6 +1,6 @@
 import React from 'react'
 import { createPropsGetter, createDefaultProps } from 'create-props-getter'
-import './Block.scss'
+// import './Block.scss'
 import Checkbox from '../../components/Checkbox'
 
 type Props = {
@@ -35,14 +35,14 @@ const GameBlock: React.FC<Props> = (props) => {
 
   return (
     <span
-      className='mine-sweeper__block'
+      className='minesweeper__block'
       onMouseUp={handleMouseUp}
       onContextMenu={handleContextMenu}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       <Checkbox
-        classBlock='mine-sweeper__checkbox'
+        classBlock='minesweeper__checkbox'
         indeterminate={isMarked}
         checked={isFlipped}
       >

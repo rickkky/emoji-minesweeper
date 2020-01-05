@@ -1,0 +1,7 @@
+@import './variables.scss';
+
+.#{$class-block} {
+  .#{$class-block}__row {
+    height: $block__size;
+  }
+}
