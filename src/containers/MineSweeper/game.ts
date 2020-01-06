@@ -43,6 +43,7 @@ export function createEmptyGame(
     flippedNum: 0,
     markedNum: 0,
     stepNum: 0,
+    time: 0,
     status: 'ongoing' as GameStatus,
   }
 }

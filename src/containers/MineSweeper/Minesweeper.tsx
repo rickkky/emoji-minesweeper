@@ -10,6 +10,7 @@ import {
 import spread from './spread'
 import Header from './Header'
 import Grid from './Grid'
+import Stopwatch from '../../utils/stopwatch'
 
 interface State {
   rowNum: number
@@ -20,6 +21,7 @@ interface State {
   flippedNum: number
   markedNum: number
   stepNum: number
+  time: number
   status: GameStatus
   isFrightened: boolean
 }
@@ -49,6 +51,8 @@ const classBlock = 'minesweeper'
 export default class Minesweeper extends Component<Props, State> {
   static defaultProps = defaultProps
 
+  stopwatch: Stopwatch
+
   constructor(props: Props) {
     super(props)
 
@@ -58,6 +62,9 @@ export default class Minesweeper extends Component<Props, State> {
       ...createEmptyGame(rowNum, colNum, bombNum),
       isFrightened: false,
     }
+
+    this.stopwatch = new Stopwatch()
+    this.stopwatch.on('tick', this.handleStopwatchTick)
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
@@ -86,12 +93,15 @@ export default class Minesweeper extends Component<Props, State> {
       this.setState({
         status: 'completed',
       })
+      this.stopwatch.stop()
     }
   }
 
   handleHeaderClick = () => {
     const { rowNum, colNum, bombNum } = this.innerProps
+
     this.setState({ ...createEmptyGame(rowNum, colNum, bombNum) })
+    this.stopwatch.stop()
   }
 
   handleBlockSpread = (block: BlockState) => {
@@ -114,6 +124,12 @@ export default class Minesweeper extends Component<Props, State> {
     }
   }
 
+  handleStopwatchTick = (e: { time: number }) => {
+    this.setState({
+      time: e.time,
+    })
+  }
+
   handleBlockMouseUp = (row: number, col: number, e: React.MouseEvent) => {
     // quit if not left button
     if (e.button !== 0) {
@@ -133,9 +149,9 @@ export default class Minesweeper extends Component<Props, State> {
         seedCol: col,
       })
 
-      this.setState({
-        blockMap,
-      })
+      this.setState({ blockMap })
+
+      this.stopwatch.start()
     } else {
       blockMap = this.state.blockMap
     }
@@ -157,6 +173,8 @@ export default class Minesweeper extends Component<Props, State> {
       this.setState({
         status: 'failed',
       })
+
+      this.stopwatch.stop()
 
       return
     }
@@ -278,7 +296,7 @@ export default class Minesweeper extends Component<Props, State> {
   }
 
   renderFooter() {
-    const { markedNum, stepNum } = this.state
+    const { markedNum, stepNum, time } = this.state
     const { bombNum } = this.innerProps
 
     return (
@@ -292,6 +310,10 @@ export default class Minesweeper extends Component<Props, State> {
         <div className={`${classBlock}__step-counter`}>
           <span>{stepNum}</span>
           <span>STEPS</span>
+        </div>
+        <div className={`${classBlock}__time-counter`}>
+          <span>{(time / 1000).toFixed(3)}</span>
+          <span>TIME</span>
         </div>
       </div>
     )
