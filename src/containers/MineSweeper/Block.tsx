@@ -1,9 +1,9 @@
 import React from 'react'
 import { createPropsGetter, createDefaultProps } from 'create-props-getter'
-// import './Block.scss'
 import Checkbox from '../../components/Checkbox'
 
 type Props = {
+  classBlock: string
   back: string
   front: string
   mark: string
@@ -22,6 +22,7 @@ const getProps = createPropsGetter(defaultProps)
 
 const GameBlock: React.FC<Props> = (props) => {
   const {
+    classBlock,
     isFlipped,
     isMarked,
     back,
@@ -35,14 +36,14 @@ const GameBlock: React.FC<Props> = (props) => {
 
   return (
     <span
-      className='minesweeper__block'
+      className={`${classBlock}__block`}
       onMouseUp={handleMouseUp}
       onContextMenu={handleContextMenu}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       <Checkbox
-        classBlock='minesweeper__checkbox'
+        className={`${classBlock}__checkbox`}
         indeterminate={isMarked}
         checked={isFlipped}
       >

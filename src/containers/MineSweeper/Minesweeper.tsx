@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
 import { createPropsGetter, createDefaultProps } from 'create-props-getter'
-// import './Minesweeper.scss'
 import initGame, { Game } from './initGame'
 import spread from './spread'
+import Header from './Header'
 import Grid from './Grid'
 
 interface State {
   game: Game
-  isFrigthened: boolean
+  isFrightened: boolean
 }
 
 type Props = {} & Partial<typeof defaultProps>
@@ -42,7 +42,7 @@ export default class Minesweeper extends Component<Props, State> {
 
     this.state = {
       game: initGame(rowNum, colNum, bombNum),
-      isFrigthened: false,
+      isFrightened: false,
     }
   }
 
@@ -80,7 +80,7 @@ export default class Minesweeper extends Component<Props, State> {
 
     // reset face
     this.setState({
-      isFrigthened: false,
+      isFrightened: false,
     })
 
     // quit if not left button
@@ -135,13 +135,13 @@ export default class Minesweeper extends Component<Props, State> {
     }
 
     this.setState({
-      isFrigthened: true,
+      isFrightened: true,
     })
   }
 
   handleBlockMouseLeave = (row: number, col: number, e: React.MouseEvent) => {
     this.setState({
-      isFrigthened: false,
+      isFrightened: false,
     })
   }
 
@@ -150,7 +150,7 @@ export default class Minesweeper extends Component<Props, State> {
   }
 
   renderHeader() {
-    const { game, isFrigthened } = this.state
+    const { game, isFrightened } = this.state
     const { status } = game
     const {
       rowNum,
@@ -162,32 +162,19 @@ export default class Minesweeper extends Component<Props, State> {
       frightened,
       hovered,
     } = this.innerProps
-    let face = ''
-
-    if (status === 'completed') {
-      face = completed
-    } else if (status === 'failed') {
-      face = failed
-    } else {
-      face = ongoing
-
-      if (isFrigthened) {
-        face = frightened
-      }
-    }
 
     return (
-      <div
-        className={`${classBlock}__header`}
+      <Header
+        classBlock={classBlock}
+        ongoing={ongoing}
+        completed={completed}
+        failed={failed}
+        frightened={frightened}
+        hovered={hovered}
+        status={status}
+        isFrightened={isFrightened}
         onClick={() => this.handleInit(rowNum, colNum, bombNum)}
-      >
-        <span className={`${classBlock}__status`}>{face}</span>
-        <span
-          className={`${classBlock}__status ${classBlock}__status--hovered`}
-        >
-          {hovered}
-        </span>
-      </div>
+      />
     )
   }
 
@@ -199,6 +186,7 @@ export default class Minesweeper extends Component<Props, State> {
 
     return (
       <Grid
+        classBlock={classBlock}
         back={back}
         blank={blank}
         mark={mark}

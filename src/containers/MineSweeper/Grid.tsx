@@ -5,7 +5,7 @@ import { BlockMap } from './initGame'
 import noop from '../../utils/noop'
 
 type Props = {
-  blockMap?: BlockMap
+  classBlock: string
   back: string
   blank: string
   mark: string
@@ -14,6 +14,7 @@ type Props = {
   rowNum: number
   colNum: number
   status: 'ongoing' | 'completed' | 'failed'
+  blockMap?: BlockMap
 } & Partial<typeof defaultProps>
 
 const defaultProps = createDefaultProps({
@@ -41,8 +42,6 @@ const defaultProps = createDefaultProps({
 
 const getProps = createPropsGetter(defaultProps)
 
-const classBlock = 'minesweeper'
-
 const numbers = ['', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣']
 
 export default class Grid extends PureComponent<Props> {
@@ -52,6 +51,7 @@ export default class Grid extends PureComponent<Props> {
 
   render() {
     const {
+      classBlock,
       back,
       blank,
       mark,
@@ -59,8 +59,8 @@ export default class Grid extends PureComponent<Props> {
       boom,
       rowNum,
       colNum,
-      blockMap,
       status,
+      blockMap,
       onMouseUp: handleMouseUp,
       onContextMenu: handleContextMenu,
       onMouseEnter: handleMouseEnter,
@@ -85,6 +85,25 @@ export default class Grid extends PureComponent<Props> {
       const blocks = []
 
       for (let col = 0; col <= colNum - 1; ++col) {
+        if (!blockMap) {
+          blocks.push(
+            <Block
+              key={`${row}-${col}`}
+              classBlock={classBlock}
+              back={back}
+              front={back}
+              mark={mark}
+              isMarked={false}
+              isFlipped={false}
+              onMouseUp={handleMouseUp.bind(undefined, row, col)}
+              // onContextMenu={handleContextMenu.bind(undefined, row, col)}
+              onMouseEnter={handleMouseEnter.bind(undefined, row, col)}
+              onMouseLeave={handleMouseLeave.bind(undefined, row, col)}
+            />,
+          )
+          continue
+        }
+
         const block = blockMap[row * colNum + col]
 
         if (status !== 'ongoing') {
@@ -102,6 +121,7 @@ export default class Grid extends PureComponent<Props> {
         blocks.push(
           <Block
             key={`${row}-${col}`}
+            classBlock={classBlock}
             back={back}
             front={typeMap[block.type]}
             mark={mark}
