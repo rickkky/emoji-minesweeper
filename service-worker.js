@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/emoji-minesweeper--react/precache-manifest.884d6e904252e8aa4e8f3ef7737c093c.js"
+  "/emoji-minesweeper--react/precache-manifest.07e68447bb46348e0fe8d2de34b2be72.js"
 );
 
 self.addEventListener('message', (event) => {
