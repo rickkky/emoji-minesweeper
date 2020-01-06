@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react'
 import { createPropsGetter, createDefaultProps } from 'create-props-getter'
 import Block from './Block'
-import { BlockMap } from './initGame'
+import { BlockMap } from './game'
 import noop from '../../utils/noop'
 
 type Props = {
@@ -45,6 +45,8 @@ const getProps = createPropsGetter(defaultProps)
 const numbers = ['', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣']
 
 export default class Grid extends PureComponent<Props> {
+  static defaultProps = defaultProps
+
   get innerProps() {
     return getProps(this.props)
   }
@@ -74,13 +76,6 @@ export default class Grid extends PureComponent<Props> {
     }
     const rows = []
 
-    console.log('render')
-
-    if (!blockMap) {
-      // not starting
-      return <div></div>
-    }
-
     for (let row = 0; row <= rowNum - 1; ++row) {
       const blocks = []
 
@@ -96,7 +91,6 @@ export default class Grid extends PureComponent<Props> {
               isMarked={false}
               isFlipped={false}
               onMouseUp={handleMouseUp.bind(undefined, row, col)}
-              // onContextMenu={handleContextMenu.bind(undefined, row, col)}
               onMouseEnter={handleMouseEnter.bind(undefined, row, col)}
               onMouseLeave={handleMouseLeave.bind(undefined, row, col)}
             />,

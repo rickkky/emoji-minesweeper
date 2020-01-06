@@ -1,12 +1,26 @@
 import React, { Component } from 'react'
 import { createPropsGetter, createDefaultProps } from 'create-props-getter'
-import initGame, { Game } from './initGame'
+import {
+  createEmptyGame,
+  createBlockMap,
+  GameStatus,
+  BlockMap,
+  BlockState,
+} from './game'
 import spread from './spread'
 import Header from './Header'
 import Grid from './Grid'
 
 interface State {
-  game: Game
+  rowNum: number
+  colNum: number
+  bombNum: number
+  totalNum: number
+  blockMap: BlockMap | undefined
+  flippedNum: number
+  markedNum: number
+  stepNum: number
+  status: GameStatus
   isFrightened: boolean
 }
 
@@ -38,10 +52,10 @@ export default class Minesweeper extends Component<Props, State> {
   constructor(props: Props) {
     super(props)
 
-    const { rowNum, colNum, bombNum } = getProps(props)
+    const { rowNum, colNum, bombNum } = this.innerProps
 
     this.state = {
-      game: initGame(rowNum, colNum, bombNum),
+      ...createEmptyGame(rowNum, colNum, bombNum),
       isFrightened: false,
     }
   }
@@ -59,75 +73,143 @@ export default class Minesweeper extends Component<Props, State> {
       colNum !== prevColNum ||
       bombNum !== prevBombNum
     ) {
-      this.handleInit(rowNum, colNum, bombNum)
-    }
-  }
-
-  handleInit = (rowNum: number, colNum: number, bombNum: number) => {
-    this.setState({
-      game: initGame(rowNum, colNum, bombNum),
-    })
-  }
-
-  handleBlockMouseUp = (row: number, col: number, e: React.MouseEvent) => {
-    const { game } = this.state
-    const { rowNum, colNum, bombNum, blockMap } = game
-    const block = blockMap[row * colNum + col]
-
-    if (game.status !== 'ongoing' || block.isFlipped || block.isMarked) {
+      this.setState({
+        ...createEmptyGame(rowNum, colNum, bombNum),
+      })
       return
     }
 
-    // reset face
-    this.setState({
-      isFrightened: false,
+    if (
+      this.state.status === 'ongoing' &&
+      this.state.flippedNum === this.state.totalNum - this.state.bombNum
+    ) {
+      this.setState({
+        status: 'completed',
+      })
+    }
+  }
+
+  handleHeaderClick = () => {
+    const { rowNum, colNum, bombNum } = this.innerProps
+    this.setState({ ...createEmptyGame(rowNum, colNum, bombNum) })
+  }
+
+  handleBlockSpread = (block: BlockState) => {
+    block.isFlipped = true
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        flippedNum: prevState.flippedNum + 1,
+      }
     })
 
+    if (block.isMarked) {
+      block.isMarked = false
+      this.setState((prevState) => {
+        return {
+          ...prevState,
+          markedNum: prevState.markedNum - 1,
+        }
+      })
+    }
+  }
+
+  handleBlockMouseUp = (row: number, col: number, e: React.MouseEvent) => {
     // quit if not left button
     if (e.button !== 0) {
       return
     }
 
-    game.stepNum += 1
+    const { rowNum, colNum, bombNum, totalNum, status, stepNum } = this.state
+    let blockMap: BlockMap
 
-    if (block.type === -1) {
-      block.type = -2
-      game.status = 'failed'
-      this.forceUpdate()
+    if (!this.state.blockMap) {
+      blockMap = createBlockMap({
+        rowNum,
+        colNum,
+        bombNum,
+        totalNum,
+        seedRow: row,
+        seedCol: col,
+      })
+
+      this.setState({
+        blockMap,
+      })
+    } else {
+      blockMap = this.state.blockMap
+    }
+
+    const block = blockMap[row * colNum + col]
+
+    if (status !== 'ongoing' || block.isFlipped || block.isMarked) {
       return
     }
 
-    spread(row, col, game)
+    this.setState({
+      isFrightened: false,
+      stepNum: stepNum + 1,
+    })
 
-    game.blockMap = [...blockMap]
+    if (block.type === -1) {
+      block.type = -2
 
-    if (game.flippedNum === rowNum * colNum - bombNum) {
-      game.status = 'completed'
+      this.setState({
+        status: 'failed',
+      })
+
+      return
     }
 
-    this.forceUpdate()
+    spread({
+      rowNum,
+      colNum,
+      blockMap,
+      row,
+      col,
+      handler: this.handleBlockSpread,
+    })
+
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        blockMap: [...blockMap],
+      }
+    })
   }
 
   handleBlockContextMenu = (row: number, col: number, e: React.MouseEvent) => {
-    const { game } = this.state
-    const { colNum, blockMap } = game
+    const { colNum, blockMap, markedNum, status } = this.state
+
+    if (!blockMap) {
+      return
+    }
+
     const block = blockMap[row * colNum + col]
 
-    if (game.status !== 'ongoing' || block.isFlipped) {
+    if (status !== 'ongoing' || block.isFlipped) {
       return
     }
 
     block.isMarked = !block.isMarked
-    game.markedNum += block.isMarked ? 1 : -1
 
-    game.blockMap = [...blockMap]
-
-    this.forceUpdate()
+    this.setState({
+      markedNum: markedNum + (block.isMarked ? 1 : -1),
+      blockMap: [...blockMap],
+      isFrightened: false,
+    })
   }
 
   handleBlockMouseEnter = (row: number, col: number, e: React.MouseEvent) => {
-    const { game } = this.state
-    const { colNum, blockMap } = game
+    const { colNum, blockMap } = this.state
+
+    if (!blockMap) {
+      this.setState({
+        isFrightened: true,
+      })
+      return
+    }
+
     const block = blockMap[row * colNum + col]
 
     if (block.isFlipped || block.isMarked) {
@@ -150,18 +232,8 @@ export default class Minesweeper extends Component<Props, State> {
   }
 
   renderHeader() {
-    const { game, isFrightened } = this.state
-    const { status } = game
-    const {
-      rowNum,
-      colNum,
-      bombNum,
-      ongoing,
-      completed,
-      failed,
-      frightened,
-      hovered,
-    } = this.innerProps
+    const { status, isFrightened } = this.state
+    const { ongoing, completed, failed, frightened, hovered } = this.innerProps
 
     return (
       <Header
@@ -173,29 +245,30 @@ export default class Minesweeper extends Component<Props, State> {
         hovered={hovered}
         status={status}
         isFrightened={isFrightened}
-        onClick={() => this.handleInit(rowNum, colNum, bombNum)}
+        onClick={this.handleHeaderClick}
       />
     )
   }
 
   renderGrid() {
-    const { back, blank, mark, bomb, boom, rowNum, colNum } = this.innerProps
-    const {
-      game: { blockMap, status },
-    } = this.state
+    const innerProps = this.innerProps
+    const { rowNum, colNum, blockMap, status } = this.state
+    const gridProps = {
+      classBlock,
+      back: innerProps.back,
+      blank: innerProps.blank,
+      mark: innerProps.mark,
+      bomb: innerProps.bomb,
+      boom: innerProps.boom,
+      rowNum,
+      colNum,
+      blockMap,
+      status,
+    }
 
     return (
       <Grid
-        classBlock={classBlock}
-        back={back}
-        blank={blank}
-        mark={mark}
-        bomb={bomb}
-        boom={boom}
-        rowNum={rowNum}
-        colNum={colNum}
-        blockMap={blockMap}
-        status={status}
+        {...gridProps}
         onMouseUp={this.handleBlockMouseUp}
         onContextMenu={this.handleBlockContextMenu}
         onMouseEnter={this.handleBlockMouseEnter}
@@ -205,8 +278,7 @@ export default class Minesweeper extends Component<Props, State> {
   }
 
   renderFooter() {
-    const { game } = this.state
-    const { markedNum, stepNum } = game
+    const { markedNum, stepNum } = this.state
     const { bombNum } = this.innerProps
 
     return (

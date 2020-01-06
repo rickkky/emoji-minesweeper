@@ -1,6 +1,6 @@
 import React from 'react'
 import { createPropsGetter, createDefaultProps } from 'create-props-getter'
-import Checkbox from '../../components/Checkbox'
+import Checkbox from '../../components/checkbox'
 
 type Props = {
   classBlock: string
@@ -43,7 +43,7 @@ const GameBlock: React.FC<Props> = (props) => {
       onMouseLeave={handleMouseLeave}
     >
       <Checkbox
-        className={`${classBlock}__checkbox`}
+        classBlock={`${classBlock}__checkbox`}
         indeterminate={isMarked}
         checked={isFlipped}
       >
