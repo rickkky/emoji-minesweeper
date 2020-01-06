@@ -14,11 +14,13 @@
 
   .#{$class-block}__header {
     width: calc(100% - 20px);
-    padding: 5px;
+    padding: 10px;
     border: 1px solid $background-color--2nd;
     border-radius: 3px;
-    text-align: center;
     box-sizing: border-box;
+    background-color: $background-color;
+    font-size: 20px;
+    text-align: center;
     cursor: pointer;
 
     span {
@@ -30,6 +32,8 @@
     }
 
     &:hover {
+      background-color: $background-color--2nd;
+
       span {
         display: none;
       }
