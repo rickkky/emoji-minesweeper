@@ -1,11 +1,11 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "cee330c8da75c2627e44fce162379273",
+    "revision": "9f5b0b037500dd6edba3069f5871c12c",
     "url": "/emoji-minesweeper--react/index.html"
   },
   {
-    "revision": "a26b0a093a89f5dc94c1",
-    "url": "/emoji-minesweeper--react/static/css/main.4d66212a.chunk.css"
+    "revision": "961a74d4371b6aa9c2eb",
+    "url": "/emoji-minesweeper--react/static/css/main.ed8360c0.chunk.css"
   },
   {
     "revision": "67ad9cb99049523dfd45",
@@ -16,7 +16,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/emoji-minesweeper--react/static/js/2.67f18424.chunk.js.LICENSE"
   },
   {
-    "revision": "a26b0a093a89f5dc94c1",
+    "revision": "961a74d4371b6aa9c2eb",
     "url": "/emoji-minesweeper--react/static/js/main.e33dd9f2.chunk.js"
   },
   {

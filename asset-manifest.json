@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/emoji-minesweeper--react/static/css/main.4d66212a.chunk.css",
+    "main.css": "/emoji-minesweeper--react/static/css/main.ed8360c0.chunk.css",
     "main.js": "/emoji-minesweeper--react/static/js/main.e33dd9f2.chunk.js",
     "main.js.map": "/emoji-minesweeper--react/static/js/main.e33dd9f2.chunk.js.map",
     "runtime-main.js": "/emoji-minesweeper--react/static/js/runtime-main.d14b45aa.js",
@@ -8,15 +8,15 @@
     "static/js/2.67f18424.chunk.js": "/emoji-minesweeper--react/static/js/2.67f18424.chunk.js",
     "static/js/2.67f18424.chunk.js.map": "/emoji-minesweeper--react/static/js/2.67f18424.chunk.js.map",
     "index.html": "/emoji-minesweeper--react/index.html",
-    "precache-manifest.07e68447bb46348e0fe8d2de34b2be72.js": "/emoji-minesweeper--react/precache-manifest.07e68447bb46348e0fe8d2de34b2be72.js",
+    "precache-manifest.0869c61ead0ac716b457c33ba735cd05.js": "/emoji-minesweeper--react/precache-manifest.0869c61ead0ac716b457c33ba735cd05.js",
     "service-worker.js": "/emoji-minesweeper--react/service-worker.js",
-    "static/css/main.4d66212a.chunk.css.map": "/emoji-minesweeper--react/static/css/main.4d66212a.chunk.css.map",
+    "static/css/main.ed8360c0.chunk.css.map": "/emoji-minesweeper--react/static/css/main.ed8360c0.chunk.css.map",
     "static/js/2.67f18424.chunk.js.LICENSE": "/emoji-minesweeper--react/static/js/2.67f18424.chunk.js.LICENSE"
   },
   "entrypoints": [
     "static/js/runtime-main.d14b45aa.js",
     "static/js/2.67f18424.chunk.js",
-    "static/css/main.4d66212a.chunk.css",
+    "static/css/main.ed8360c0.chunk.css",
     "static/js/main.e33dd9f2.chunk.js"
   ]
 }
