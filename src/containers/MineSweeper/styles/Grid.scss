@@ -3,5 +3,6 @@
 .#{$class-block} {
   .#{$class-block}__row {
     height: $block__size;
+    white-space: nowrap;
   }
 }
