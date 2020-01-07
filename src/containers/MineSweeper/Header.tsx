@@ -1,5 +1,7 @@
 import React from 'react'
 import { createPropsGetter, createDefaultProps } from 'create-props-getter'
+import TwemojiContext from './TwemojiContext'
+import Emoji from '../../components/emoji'
 import noop from '../../utils/noop'
 
 type Props = {
@@ -47,12 +49,21 @@ const Header: React.FC<Props> = (props) => {
   }
 
   return (
-    <div className={`${classBlock}__header`} onClick={handleClick}>
-      <span className={`${classBlock}__status`}>{face}</span>
-      <span className={`${classBlock}__status ${classBlock}__status--hovered`}>
-        {hovered}
-      </span>
-    </div>
+    <TwemojiContext.Consumer>
+      {(twemojiEnabled) => (
+        <div className={`${classBlock}__header`} onClick={handleClick}>
+          <Emoji className={`${classBlock}__status`} isTwemoji={twemojiEnabled}>
+            {face}
+          </Emoji>
+          <Emoji
+            className={`${classBlock}__status ${classBlock}__status--hovered`}
+            isTwemoji={twemojiEnabled}
+          >
+            {hovered}
+          </Emoji>
+        </div>
+      )}
+    </TwemojiContext.Consumer>
   )
 }
 

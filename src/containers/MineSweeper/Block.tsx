@@ -1,6 +1,8 @@
 import React from 'react'
 import { createPropsGetter, createDefaultProps } from 'create-props-getter'
+import TwemojiContext from './TwemojiContext'
 import Checkbox from '../../components/checkbox'
+import Emoji from '../../components/emoji'
 
 type Props = {
   classBlock: string
@@ -35,21 +37,27 @@ const GameBlock: React.FC<Props> = (props) => {
   } = getProps(props)
 
   return (
-    <span
-      className={`${classBlock}__block`}
-      onMouseUp={handleMouseUp}
-      onContextMenu={handleContextMenu}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      <Checkbox
-        classBlock={`${classBlock}__checkbox`}
-        indeterminate={isMarked}
-        checked={isFlipped}
-      >
-        {isMarked ? mark : isFlipped ? front : back}
-      </Checkbox>
-    </span>
+    <TwemojiContext.Consumer>
+      {(value) => (
+        <span
+          className={`${classBlock}__block`}
+          onMouseUp={handleMouseUp}
+          onContextMenu={handleContextMenu}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          <Checkbox
+            classBlock={`${classBlock}__checkbox`}
+            indeterminate={isMarked}
+            checked={isFlipped}
+          >
+            <Emoji isTwemoji={value}>
+              {isMarked ? mark : isFlipped ? front : back}
+            </Emoji>
+          </Checkbox>
+        </span>
+      )}
+    </TwemojiContext.Consumer>
   )
 }
 

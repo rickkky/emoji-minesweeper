@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, createRef } from 'react'
 import { createPropsGetter, createDefaultProps } from 'create-props-getter'
 import {
   createEmptyGame,
@@ -8,6 +8,7 @@ import {
   BlockState,
 } from './game'
 import spread from './spread'
+import TwemojiContext from './TwemojiContext'
 import Header from './Header'
 import Grid from './Grid'
 import Stopwatch from '../../utils/stopwatch'
@@ -42,6 +43,7 @@ const defaultProps = createDefaultProps({
   rowNum: 10,
   colNum: 10,
   bombNum: 10,
+  twemojiEnabled: true,
 })
 
 const getProps = createPropsGetter(defaultProps)
@@ -50,6 +52,8 @@ const classBlock = 'minesweeper'
 
 export default class Minesweeper extends Component<Props, State> {
   static defaultProps = defaultProps
+
+  containerRef: React.RefObject<HTMLDivElement> = createRef()
 
   stopwatch: Stopwatch
 
@@ -94,6 +98,7 @@ export default class Minesweeper extends Component<Props, State> {
         status: 'completed',
       })
       this.stopwatch.stop()
+      return
     }
   }
 
@@ -250,7 +255,6 @@ export default class Minesweeper extends Component<Props, State> {
   }
 
   renderHeader() {
-    const { status, isFrightened } = this.state
     const { ongoing, completed, failed, frightened, hovered } = this.innerProps
 
     return (
@@ -261,8 +265,8 @@ export default class Minesweeper extends Component<Props, State> {
         failed={failed}
         frightened={frightened}
         hovered={hovered}
-        status={status}
-        isFrightened={isFrightened}
+        status={this.state.status}
+        isFrightened={this.state.isFrightened}
         onClick={this.handleHeaderClick}
       />
     )
@@ -320,15 +324,20 @@ export default class Minesweeper extends Component<Props, State> {
   }
 
   render() {
+    const { twemojiEnabled } = this.innerProps
+
     return (
-      <div
-        className={`${classBlock}`}
-        onContextMenu={(e) => e.preventDefault()}
-      >
-        {this.renderHeader()}
-        {this.renderGrid()}
-        {this.renderFooter()}
-      </div>
+      <TwemojiContext.Provider value={twemojiEnabled}>
+        <div
+          ref={this.containerRef}
+          className={`${classBlock}`}
+          onContextMenu={(e) => e.preventDefault()}
+        >
+          {this.renderHeader()}
+          {this.renderGrid()}
+          {this.renderFooter()}
+        </div>
+      </TwemojiContext.Provider>
     )
   }
 }

@@ -1,5 +1,6 @@
 import React from 'react'
 import './App.scss'
+import Emoji from './components/emoji'
 import Minesweeper from './containers/minesweeper'
 
 const App: React.FC = () => {
@@ -14,13 +15,9 @@ const App: React.FC = () => {
           rel='noopener noreferrer'
           target='_blank'
         >
-          <span role='img' aria-label='nerd'>
-            🤓
-          </span>
-          &nbsp; SOURCE CODE &nbsp;
-          <span role='img' aria-label='nerd'>
-            🤓
-          </span>
+          <Emoji size={20}>{'🤓'}</Emoji>
+          <span>&nbsp; SOURCE CODE &nbsp;</span>
+          <Emoji size={20}>{'🤓'}</Emoji>
         </a>
       </div>
     </div>

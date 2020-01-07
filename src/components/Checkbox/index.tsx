@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import createPropsGetter, {
+import {
+  createPropsGetter,
   createDefaultProps,
   WithDefault,
 } from 'create-props-getter'
@@ -45,7 +46,7 @@ const defaultProps = createDefaultProps({
 
 const getProps = createPropsGetter(defaultProps)
 
-const Checkbox: React.FC<Props> = (props: Props) => {
+const Checkbox: React.FC<Props> = (props) => {
   const {
     id,
     className,

@@ -14,17 +14,21 @@
 
   .#{$class-block}__header {
     width: calc(100% - 20px);
-    padding: 10px;
+    height: 40px;
     border: 2px solid $background-color--2nd;
-    border-radius: 5px;
     box-sizing: border-box;
+    line-height: 40px;
+    border-radius: 5px;
     background-color: $background-color;
     font-size: 20px;
     text-align: center;
     cursor: pointer;
 
-    span {
-      display: inline;
+    > span {
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+      font-size: 20px;
     }
 
     .#{$class-block}__status--hovered {
@@ -34,12 +38,12 @@
     &:hover {
       background-color: $background-color--2nd;
 
-      span {
+      > span {
         display: none;
       }
 
       .#{$class-block}__status--hovered {
-        display: inline;
+        display: inline-block;
       }
     }
   }

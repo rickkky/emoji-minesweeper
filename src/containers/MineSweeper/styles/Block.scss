@@ -42,14 +42,33 @@
       vertical-align: middle;
     }
 
-    &:hover .#{$class-block}__checkbox__inner {
-      font-size: $block--hovered__font-size;
+    .emoji {
+      width: $block__font-size;
+      height: $block__font-size;
+      line-height: $block__font-size;
+      font-size: $block__font-size;
+    }
+
+    &:hover {
+      .emoji {
+        width: $block--hovered__font-size;
+        height: $block--hovered__font-size;
+        line-height: $block--hovered__font-size;
+        font-size: $block--hovered__font-size;
+      }
     }
   }
 
   .#{$class-block}__checkbox--checked {
-    &:hover .#{$class-block}__checkbox__inner {
-      font-size: $block__font-size;
+    &:hover {
+      .#{$class-block}__checkbox__inner {
+        font-size: $block__font-size;
+      }
+
+      img {
+        width: $block__font-size;
+        height: $block__font-size;
+      }
     }
 
     .#{$class-block}__checkbox__input {

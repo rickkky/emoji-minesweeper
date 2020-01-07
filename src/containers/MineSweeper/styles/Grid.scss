@@ -1,8 +1,12 @@
 @import './variables.scss';
 
 .#{$class-block} {
+  display: inline-block;
+
   .#{$class-block}__row {
+    display: block;
     height: $block__size;
     white-space: nowrap;
+    text-align: center;
   }
 }
