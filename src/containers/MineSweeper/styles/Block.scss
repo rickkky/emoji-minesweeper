@@ -61,13 +61,11 @@
 
   .#{$class-block}__checkbox--checked {
     &:hover {
-      .#{$class-block}__checkbox__inner {
-        font-size: $block__font-size;
-      }
-
-      img {
+      .emoji {
         width: $block__font-size;
         height: $block__font-size;
+        line-height: $block__font-size;
+        font-size: $block__font-size;
       }
     }
 
