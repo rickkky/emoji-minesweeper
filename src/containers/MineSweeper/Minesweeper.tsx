@@ -12,6 +12,7 @@ import TwemojiContext from './TwemojiContext'
 import Header from './Header'
 import Grid from './Grid'
 import Stopwatch from '../../utils/stopwatch'
+import Footer from './Footer'
 
 interface State {
   rowNum: number
@@ -111,40 +112,28 @@ export default class Minesweeper extends Component<Props, State> {
 
   handleBlockSpread = (block: BlockState) => {
     block.isFlipped = true
-    this.setState((prevState) => {
-      return {
-        ...prevState,
-        flippedNum: prevState.flippedNum + 1,
-      }
-    })
+    this.setState((p) => ({ flippedNum: p.flippedNum + 1 }))
 
     if (block.isMarked) {
       block.isMarked = false
-      this.setState((prevState) => {
-        return {
-          ...prevState,
-          markedNum: prevState.markedNum - 1,
-        }
-      })
+      this.setState((p) => ({ markedNum: p.markedNum - 1 }))
     }
   }
 
-  handleStopwatchTick = (e: { time: number }) => {
-    this.setState({
-      time: e.time,
-    })
+  handleStopwatchTick = (evt: { time: number }) => {
+    this.setState(() => ({ time: evt.time }))
   }
 
-  handleBlockMouseUp = (row: number, col: number, e: React.MouseEvent) => {
+  handleBlockMouseUp = (row: number, col: number, evt: React.MouseEvent) => {
     // quit if not left button
-    if (e.button !== 0) {
+    if (evt.button !== 0) {
       return
     }
 
-    const { rowNum, colNum, bombNum, totalNum, status, stepNum } = this.state
-    let blockMap: BlockMap
+    const { rowNum, colNum, bombNum, totalNum } = this.state
+    let { blockMap, status, stepNum } = this.state
 
-    if (!this.state.blockMap) {
+    if (!blockMap) {
       blockMap = createBlockMap({
         rowNum,
         colNum,
@@ -153,12 +142,7 @@ export default class Minesweeper extends Component<Props, State> {
         seedRow: row,
         seedCol: col,
       })
-
-      this.setState({ blockMap })
-
       this.stopwatch.start()
-    } else {
-      blockMap = this.state.blockMap
     }
 
     const block = blockMap[row * colNum + col]
@@ -167,41 +151,38 @@ export default class Minesweeper extends Component<Props, State> {
       return
     }
 
-    this.setState({
-      isFrightened: false,
-      stepNum: stepNum + 1,
-    })
+    stepNum += 1
 
     if (block.type === -1) {
       block.type = -2
-
-      this.setState({
-        status: 'failed',
-      })
-
+      status = 'failed'
       this.stopwatch.stop()
-
-      return
     }
 
-    spread({
+    blockMap = spread({
       rowNum,
       colNum,
       blockMap,
       row,
       col,
-      handler: this.handleBlockSpread,
+      handle: this.handleBlockSpread,
     })
 
     this.setState((prevState) => {
       return {
         ...prevState,
-        blockMap: [...blockMap],
+        blockMap,
+        status,
+        stepNum,
       }
     })
   }
 
-  handleBlockContextMenu = (row: number, col: number, e: React.MouseEvent) => {
+  handleBlockContextMenu = (
+    row: number,
+    col: number,
+    evt: React.MouseEvent,
+  ) => {
     const { colNum, blockMap, markedNum, status } = this.state
 
     if (!blockMap) {
@@ -223,7 +204,7 @@ export default class Minesweeper extends Component<Props, State> {
     })
   }
 
-  handleBlockMouseEnter = (row: number, col: number, e: React.MouseEvent) => {
+  handleBlockMouseEnter = (row: number, col: number, evt: React.MouseEvent) => {
     const { colNum, blockMap } = this.state
 
     if (!blockMap) {
@@ -244,7 +225,7 @@ export default class Minesweeper extends Component<Props, State> {
     })
   }
 
-  handleBlockMouseLeave = (row: number, col: number, e: React.MouseEvent) => {
+  handleBlockMouseLeave = (row: number, col: number, evt: React.MouseEvent) => {
     this.setState({
       isFrightened: false,
     })
@@ -300,26 +281,17 @@ export default class Minesweeper extends Component<Props, State> {
   }
 
   renderFooter() {
-    const { markedNum, stepNum, time } = this.state
     const { bombNum } = this.innerProps
+    const { markedNum, stepNum, time } = this.state
 
     return (
-      <div className={`${classBlock}__footer`}>
-        <div className={`${classBlock}__bomb-counter`}>
-          <span>
-            {bombNum - markedNum} / {bombNum}
-          </span>
-          <span>BOMBS</span>
-        </div>
-        <div className={`${classBlock}__step-counter`}>
-          <span>{stepNum}</span>
-          <span>STEPS</span>
-        </div>
-        <div className={`${classBlock}__time-counter`}>
-          <span>{(time / 1000).toFixed(3)}</span>
-          <span>TIME</span>
-        </div>
-      </div>
+      <Footer
+        classBlock={classBlock}
+        bombNum={bombNum}
+        markedNum={markedNum}
+        stepNum={stepNum}
+        time={time}
+      />
     )
   }
 
@@ -331,7 +303,7 @@ export default class Minesweeper extends Component<Props, State> {
         <div
           ref={this.containerRef}
           className={`${classBlock}`}
-          onContextMenu={(e) => e.preventDefault()}
+          onContextMenu={(evt) => evt.preventDefault()}
         >
           {this.renderHeader()}
           {this.renderGrid()}

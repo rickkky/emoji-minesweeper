@@ -6,25 +6,28 @@ export default function spread(options: {
   blockMap: BlockMap
   row: number
   col: number
-  handler: (block: BlockState) => void
+  handle: (block: BlockState) => void
 }) {
-  const { rowNum, colNum, blockMap, row, col, handler } = options
+  const { rowNum, colNum, row, col, handle } = options
+  let { blockMap } = options
   const block = blockMap[row * colNum + col]
 
   if (block.isFlipped || block.type === -1) {
-    return
+    return blockMap
   }
 
-  handler(block)
+  handle(block)
+  blockMap = [...blockMap]
 
   if (block.type !== 0) {
-    return
+    return blockMap
   }
 
   // left top
   if (row > 0 && col > 0) {
     spread({
       ...options,
+      blockMap,
       row: row - 1,
       col: col - 1,
     })
@@ -34,6 +37,7 @@ export default function spread(options: {
   if (row > 0) {
     spread({
       ...options,
+      blockMap,
       row: row - 1,
       col: col,
     })
@@ -43,6 +47,7 @@ export default function spread(options: {
   if (row > 0 && col < colNum - 1) {
     spread({
       ...options,
+      blockMap,
       row: row - 1,
       col: col + 1,
     })
@@ -52,6 +57,7 @@ export default function spread(options: {
   if (col > 0) {
     spread({
       ...options,
+      blockMap,
       row: row,
       col: col - 1,
     })
@@ -61,6 +67,7 @@ export default function spread(options: {
   if (col < colNum - 1) {
     spread({
       ...options,
+      blockMap,
       row: row,
       col: col + 1,
     })
@@ -70,6 +77,7 @@ export default function spread(options: {
   if (row < rowNum - 1 && col > 0) {
     spread({
       ...options,
+      blockMap,
       row: row + 1,
       col: col - 1,
     })
@@ -79,6 +87,7 @@ export default function spread(options: {
   if (row < rowNum - 1) {
     spread({
       ...options,
+      blockMap,
       row: row + 1,
       col: col,
     })
@@ -88,8 +97,11 @@ export default function spread(options: {
   if (row < rowNum - 1 && col < colNum - 1) {
     spread({
       ...options,
+      blockMap,
       row: row + 1,
       col: col + 1,
     })
   }
+
+  return blockMap
 }
