@@ -1,13 +1,15 @@
-/*
-object-assign
-(c) Sindre Sorhus
-@license MIT
-*/
-
 /*!
   Copyright (c) 2019 Ricky.
   Licensed under the MIT License (MIT), see
   https://github.com/rickkky/combine-class-names
+*/
+
+/*! Copyright Twitter Inc. and other contributors. Licensed under MIT */
+
+/*
+object-assign
+(c) Sindre Sorhus
+@license MIT
 */
 
 /** @license React v16.12.0
