@@ -1,20 +1,22 @@
 import React, { PureComponent } from 'react'
 import { createPropsGetter, createDefaultProps } from 'create-props-getter'
+import { GameStatus, BombNum, ItemStatus } from './Game'
 import Block from './Block'
-import { BlockMap } from './game'
+import { classBlock } from './constants'
 import noop from '../../utils/noop'
 
 type Props = {
-  classBlock: string
+  rowNum: number
+  colNum: number
+  status: GameStatus
+  bombArray: boolean[]
+  bombNumArray: BombNum[]
+  itemStatusArray: ItemStatus[]
   back: string
   blank: string
   mark: string
   bomb: string
   boom: string
-  rowNum: number
-  colNum: number
-  status: 'ongoing' | 'completed' | 'failed'
-  blockMap?: BlockMap
 } & Partial<typeof defaultProps>
 
 const defaultProps = createDefaultProps({
@@ -42,8 +44,6 @@ const defaultProps = createDefaultProps({
 
 const getProps = createPropsGetter(defaultProps)
 
-const numbers = ['', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣']
-
 export default class Grid extends PureComponent<Props> {
   static defaultProps = defaultProps
 
@@ -53,74 +53,57 @@ export default class Grid extends PureComponent<Props> {
 
   render() {
     const {
-      classBlock,
+      rowNum,
+      colNum,
+      status,
+      bombArray,
+      bombNumArray,
+      itemStatusArray,
       back,
       blank,
       mark,
       bomb,
       boom,
-      rowNum,
-      colNum,
-      status,
-      blockMap,
       onMouseUp: handleMouseUp,
       onContextMenu: handleContextMenu,
       onMouseEnter: handleMouseEnter,
       onMouseLeave: handleMouseLeave,
     } = this.innerProps
-    const typeMap: any = {
-      ...numbers,
-      [-2]: boom,
-      [-1]: bomb,
-      0: blank,
-    }
+
     const rows = []
 
-    for (let row = 0; row <= rowNum - 1; ++row) {
+    for (let row = 0; row < rowNum; ++row) {
       const blocks = []
 
-      for (let col = 0; col <= colNum - 1; ++col) {
-        if (!blockMap) {
-          blocks.push(
-            <Block
-              key={`${row}-${col}`}
-              classBlock={classBlock}
-              back={back}
-              front={back}
-              mark={mark}
-              isMarked={false}
-              isFlipped={false}
-              onMouseUp={handleMouseUp.bind(undefined, row, col)}
-              onMouseEnter={handleMouseEnter.bind(undefined, row, col)}
-              onMouseLeave={handleMouseLeave.bind(undefined, row, col)}
-            />,
-          )
-          continue
-        }
+      for (let col = 0; col < colNum; ++col) {
+        const index = row * colNum + col
+        const isBomb = bombArray[index]
+        const bombNum = bombNumArray[index]
+        let itemStatus = itemStatusArray[index]
 
-        const block = blockMap[row * colNum + col]
-
-        if (status !== 'ongoing') {
-          block.isFlipped = true
-
-          if (status === 'completed') {
-            if (block.type === -1) {
-              block.isMarked = true
-            }
+        if (status === 'completed') {
+          if (isBomb) {
+            itemStatus = 'marked'
           } else {
-            block.isMarked = false
+            itemStatus = 'flipped'
+          }
+        } else if (status === 'failed') {
+          if (itemStatus !== 'detonated') {
+            itemStatus = 'flipped'
           }
         }
 
         blocks.push(
           <Block
             key={`${row}-${col}`}
-            classBlock={classBlock}
+            isBomb={isBomb}
+            bombNum={bombNum}
+            status={itemStatus}
             back={back}
-            front={typeMap[block.type]}
+            blank={blank}
             mark={mark}
-            isMarked={block.isMarked}
-            isFlipped={block.isFlipped}
+            bomb={bomb}
+            boom={boom}
             onMouseUp={handleMouseUp.bind(undefined, row, col)}
             onContextMenu={handleContextMenu.bind(undefined, row, col)}
             onMouseEnter={handleMouseEnter.bind(undefined, row, col)}

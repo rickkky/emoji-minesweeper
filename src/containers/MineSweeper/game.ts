@@ -1,159 +1,337 @@
-export type GameStatus = 'ongoing' | 'completed' | 'failed'
+import EventDispenser from 'event-dispenser'
+import Stopwatch, { TickEvent } from '../../utils/stopwatch'
+import createRandomBombArray from './createRandomBombArray'
 
-export type BlockType = -2 | -1 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
+export type GameStatus = 'pending' | 'ongoing' | 'completed' | 'failed'
 
-export interface BlockState {
-  type: BlockType
-  isMarked: boolean
-  isFlipped: boolean
+export type BombNum = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
+
+export type ItemStatus = 'pending' | 'flipped' | 'marked' | 'detonated'
+
+export interface GameEventMap {
+  change: undefined
+  'stopwatch-tick': TickEvent
 }
 
-export type BlockMap = BlockState[]
-
-interface Options {
+interface GameProps {
   rowNum: number
   colNum: number
   bombNum: number
-  totalNum: number
-  seedRow: number
-  seedCol: number
 }
 
-export function createEmptyGame(
-  rowNum: number,
-  colNum: number,
-  bombNum: number,
-) {
-  rowNum = Math.floor(rowNum)
-  colNum = Math.floor(colNum)
-  bombNum = Math.floor(bombNum)
+export default class Game extends EventDispenser<GameEventMap> {
+  private _rowNum = 10
 
-  const totalNum = rowNum * colNum
+  private _colNum = 10
 
-  if (rowNum <= 0 || colNum <= 0 || bombNum <= 0 || bombNum > totalNum) {
-    throw new Error('invalid game params')
+  private _bombNum = 10
+
+  private _status: GameStatus = 'pending'
+
+  private _markNum = 0
+
+  private _facecadeNum = 0
+
+  private _stepNum = 0
+
+  private _time = 0
+
+  private _bombArray: boolean[] = []
+
+  private _bombNumArray: BombNum[] = []
+
+  private _itemStatusArray: ItemStatus[] = []
+
+  private _stopwatch = new Stopwatch()
+
+  private _handleTick = (event: TickEvent) => {
+    this._time = event.time
+    this.emit('change', undefined)
+    this.emit('stopwatch-tick', event)
   }
 
-  return {
-    rowNum,
-    colNum,
-    bombNum,
-    totalNum,
-    blockMap: undefined,
-    flippedNum: 0,
-    markedNum: 0,
-    stepNum: 0,
-    time: 0,
-    status: 'ongoing' as GameStatus,
+  constructor(props?: GameProps) {
+    super()
+
+    this._stopwatch.on('tick', this._handleTick)
+
+    this.reset(props)
   }
-}
 
-export function createBlockMap(options: Options) {
-  const { rowNum, colNum } = options
-  const bombMap = createBombMap(options)
-  const blockMap = []
+  get rowNum() {
+    return this._rowNum
+  }
 
-  for (let row = 0; row < rowNum; ++row) {
-    for (let col = 0; col < colNum; ++col) {
-      const index = row * colNum + col
+  get colNum() {
+    return this._colNum
+  }
 
-      if (bombMap[index]) {
-        blockMap[index] = {
-          type: -1,
-          isMarked: false,
-          isFlipped: false,
-        }
-        continue
-      }
+  get bombNum() {
+    return this._bombNum
+  }
 
-      let count = 0
+  get status() {
+    return this._status
+  }
 
-      // left top
-      if (row > 0 && col > 0) {
-        count += bombMap[(row - 1) * colNum + col - 1] ? 1 : 0
-      }
+  get markNum() {
+    return this._markNum
+  }
 
-      // top
-      if (row > 0) {
-        count += bombMap[(row - 1) * colNum + col] ? 1 : 0
-      }
+  get facecadeNum() {
+    return this._facecadeNum
+  }
 
-      // right top
-      if (row > 0 && col < colNum - 1) {
-        count += bombMap[(row - 1) * colNum + col + 1] ? 1 : 0
-      }
+  get stepNum() {
+    return this._stepNum
+  }
 
-      // left
-      if (col > 0) {
-        count += bombMap[row * colNum + col - 1] ? 1 : 0
-      }
+  get time() {
+    return this._time
+  }
 
-      // right
-      if (col < colNum - 1) {
-        count += bombMap[row * colNum + col + 1] ? 1 : 0
-      }
+  get bombArray() {
+    return this._bombArray
+  }
 
-      // left bottom
-      if (row < rowNum - 1 && col > 0) {
-        count += bombMap[(row + 1) * colNum + col - 1] ? 1 : 0
-      }
+  get bombNumArray() {
+    return this._bombNumArray
+  }
 
-      // bottom
-      if (row < rowNum - 1) {
-        count += bombMap[(row + 1) * colNum + col] ? 1 : 0
-      }
+  get itemStatusArray() {
+    return this._itemStatusArray
+  }
 
-      // right bottom
-      if (row < rowNum - 1 && col < colNum - 1) {
-        count += bombMap[(row + 1) * colNum + col + 1] ? 1 : 0
-      }
-
-      blockMap[index] = {
-        type: count,
-        isMarked: false,
-        isFlipped: false,
-      }
+  get props() {
+    return {
+      rowNum: this._rowNum,
+      colNum: this._colNum,
+      bombNum: this._bombNum,
     }
   }
 
-  return blockMap as BlockMap
-}
+  set props(value) {
+    const rowNum = Math.floor(value.rowNum)
+    const colNum = Math.floor(value.colNum)
+    const bombNum = Math.floor(value.bombNum)
+    const total = rowNum * colNum
 
-function createBombMap(options: Options) {
-  const { colNum, bombNum, totalNum, seedRow, seedCol } = options
-  const bombMap: boolean[] = []
+    if (rowNum <= 0 || colNum <= 0 || bombNum <= 0 || bombNum > total) {
+      throw new Error('invalid game props')
+    }
 
-  // create an array with a specific number of bombs
-  for (let i = 0; i < totalNum; ++i) {
-    if (i < bombNum) {
-      bombMap.push(true)
+    this._rowNum = rowNum
+    this._colNum = colNum
+    this._bombNum = bombNum
+
+    this.reset()
+  }
+
+  reset(props?: GameProps) {
+    if (props) {
+      this.props = props
+    }
+
+    this._status = 'pending'
+    this._markNum = 0
+    this._facecadeNum = 0
+    this._stepNum = 0
+    this._time = 0
+    this._bombArray = []
+    this._bombNumArray = []
+    this._itemStatusArray = []
+    this._stopwatch.stop()
+
+    this.emit('change', undefined)
+  }
+
+  flip(row: number, col: number) {
+    if (this._status !== 'ongoing') {
+      if (this._status === 'pending') {
+        this._start(row, col)
+      }
+
+      return
+    }
+
+    const { rowNum, colNum, bombNum } = this
+    const index = row * colNum + col
+    const itemStatus = this._itemStatusArray[index]
+
+    if (itemStatus !== 'pending') {
+      return
+    }
+
+    this._stepNum += 1
+
+    if (this._bombArray[index]) {
+      // boom!!!
+      this._status = 'failed'
+      this._itemStatusArray[index] = 'detonated'
+      this._stopwatch.stop()
+    }
+
+    this._spread(row, col)
+
+    if (this._facecadeNum === rowNum * colNum - bombNum) {
+      this._status = 'completed'
+      this._stopwatch.stop()
+    }
+
+    this._itemStatusArray = [...this._itemStatusArray]
+
+    this.emit('change', undefined)
+  }
+
+  mark(row: number, col: number) {
+    if (this._status !== 'ongoing') {
+      return
+    }
+
+    const { colNum, itemStatusArray } = this
+    const index = row * colNum + col
+
+    if (itemStatusArray[index] === 'pending') {
+      itemStatusArray[index] = 'marked'
+      this._markNum += 1
+    } else if (itemStatusArray[index] === 'marked') {
+      itemStatusArray[index] = 'pending'
+      this._markNum -= 1
     } else {
-      bombMap.push(false)
+      return
+    }
+
+    this._itemStatusArray = [...this._itemStatusArray]
+
+    this.emit('change', undefined)
+  }
+
+  private _spread(row: number, col: number) {
+    const { rowNum, colNum, bombArray, itemStatusArray, bombNumArray } = this
+    const index = row * colNum + col
+
+    if (bombArray[index] || itemStatusArray[index] === 'flipped') {
+      return
+    }
+
+    this._markNum += itemStatusArray[index] === 'marked' ? -1 : 0
+    this._facecadeNum += 1
+    itemStatusArray[index] = 'flipped'
+
+    if (bombNumArray[index] !== 0) {
+      return
+    }
+
+    // left top
+    if (row > 0 && col > 0) {
+      this._spread(row - 1, col - 1)
+    }
+
+    // top
+    if (row > 0) {
+      this._spread(row - 1, col)
+    }
+
+    // right top
+    if (row > 0 && col < colNum - 1) {
+      this._spread(row - 1, col + 1)
+    }
+
+    // left
+    if (col > 0) {
+      this._spread(row, col - 1)
+    }
+
+    // right
+    if (col < colNum - 1) {
+      this._spread(row, col + 1)
+    }
+
+    // left bottom
+    if (row < rowNum - 1 && col > 0) {
+      this._spread(row + 1, col - 1)
+    }
+
+    // bottom
+    if (row < rowNum - 1) {
+      this._spread(row + 1, col)
+    }
+
+    // right bottom
+    if (row < rowNum - 1 && col < colNum - 1) {
+      this._spread(row + 1, col + 1)
     }
   }
 
-  // shuffle array
-  for (let i = 0; i < totalNum; ++i) {
-    const ri = Math.floor(Math.random() * (totalNum - 1))
-    const temp = bombMap[i]
-    bombMap[i] = bombMap[ri]
-    bombMap[ri] = temp
-  }
+  private _start(row: number, col: number) {
+    const { rowNum, colNum, bombNum } = this
+    const bombArray = createRandomBombArray({
+      rowNum: rowNum,
+      colNum: colNum,
+      bombNum: bombNum,
+      row,
+      col,
+    })
+    const itemStatusArray: ItemStatus[] = []
+    const bombNumArray: BombNum[] = []
 
-  const index = seedRow * colNum + seedCol
+    for (let row = 0; row < this._rowNum; ++row) {
+      for (let col = 0; col < this._colNum; ++col) {
+        const index = row * this._colNum + col
 
-  // the seed block should not be bomb
-  for (let i = index; i !== index - 1; ++i) {
-    if (!bombMap[i]) {
-      bombMap[i] = true
-      bombMap[index] = false
-      return bombMap
+        itemStatusArray[index] = 'pending'
+
+        let count = 0
+
+        // left top
+        if (row > 0 && col > 0) {
+          count += bombArray[(row - 1) * colNum + col - 1] ? 1 : 0
+        }
+
+        // top
+        if (row > 0) {
+          count += bombArray[(row - 1) * colNum + col] ? 1 : 0
+        }
+
+        // right top
+        if (row > 0 && col < colNum - 1) {
+          count += bombArray[(row - 1) * colNum + col + 1] ? 1 : 0
+        }
+
+        // left
+        if (col > 0) {
+          count += bombArray[row * colNum + col - 1] ? 1 : 0
+        }
+
+        // right
+        if (col < colNum - 1) {
+          count += bombArray[row * colNum + col + 1] ? 1 : 0
+        }
+
+        // left bottom
+        if (row < rowNum - 1 && col > 0) {
+          count += bombArray[(row + 1) * colNum + col - 1] ? 1 : 0
+        }
+
+        // bottom
+        if (row < rowNum - 1) {
+          count += bombArray[(row + 1) * colNum + col] ? 1 : 0
+        }
+
+        // right bottom
+        if (row < rowNum - 1 && col < colNum - 1) {
+          count += bombArray[(row + 1) * colNum + col + 1] ? 1 : 0
+        }
+
+        bombNumArray[index] = count as BombNum
+      }
     }
 
-    if (i >= totalNum - 1) {
-      i = -1
-    }
+    this._status = 'ongoing'
+    this._bombArray = bombArray
+    this._itemStatusArray = itemStatusArray
+    this._bombNumArray = bombNumArray
+    this._stopwatch.start()
+    this.flip(row, col)
   }
-
-  return bombMap
 }

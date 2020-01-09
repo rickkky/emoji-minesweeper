@@ -1,55 +1,28 @@
 @import './variables.scss';
 
-.#{$class-block}__block {
-  display: inline-block;
-  width: $block__size;
-  height: $block__size;
-
-  .#{$class-block}__checkbox {
-    position: relative;
+.#{$class-block} {
+  .#{$class-block}__block {
     display: inline-block;
-    width: 100%;
-    height: 100%;
+    width: $block__size;
+    height: $block__size;
     line-height: $block__size;
-    font-size: $block__font-size;
-    outline: none;
-    white-space: nowrap;
-
-    .#{$class-block}__checkbox__input,
-    .#{$class-block}__checkbox__inner {
-      position: absolute;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      right: 0;
-      z-index: 0;
-      display: inline-block;
-      width: 100%;
-      height: 100%;
-      border: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    .#{$class-block}__checkbox__input {
-      z-index: 1;
-      opacity: 0;
-      cursor: pointer;
-    }
-
-    .#{$class-block}__checkbox__inner {
-      text-align: center;
-      vertical-align: middle;
-    }
+    cursor: pointer;
 
     .emoji {
       width: $block__font-size;
       height: $block__font-size;
       line-height: $block__font-size;
       font-size: $block__font-size;
+      vertical-align: middle;
     }
 
-    &:hover {
+    &.#{$class-block}__block--flipped,
+    &.#{$class-block}__block--detonated {
+      cursor: default;
+    }
+
+    &.#{$class-block}__block--pending:hover,
+    &.#{$class-block}__block--marked:hover {
       .emoji {
         width: $block--hovered__font-size;
         height: $block--hovered__font-size;
@@ -59,18 +32,19 @@
     }
   }
 
-  .#{$class-block}__checkbox--checked {
-    &:hover {
-      .emoji {
-        width: $block__font-size;
-        height: $block__font-size;
-        line-height: $block__font-size;
-        font-size: $block__font-size;
-      }
-    }
-
-    .#{$class-block}__checkbox__input {
+  .#{$class-block}--completed,
+  .#{$class-block}--failed {
+    .#{$class-block}__block {
       cursor: default;
+
+      &.#{$class-block}__block--marked:hover {
+        .emoji {
+          width: $block__font-size;
+          height: $block__font-size;
+          line-height: $block__font-size;
+          font-size: $block__font-size;
+        }
+      }
     }
   }
 }

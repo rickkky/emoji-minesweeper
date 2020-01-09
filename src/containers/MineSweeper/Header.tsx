@@ -1,72 +1,55 @@
-import React from 'react'
-import { createPropsGetter, createDefaultProps } from 'create-props-getter'
-import TwemojiContext from './TwemojiContext'
+import React, { useState } from 'react'
+import { GameStatus } from './Game'
+import { classBlock } from './constants'
 import Emoji from '../../components/emoji'
-import noop from '../../utils/noop'
 
 type Props = {
-  classBlock: string
-  ongoing: string
-  completed: string
-  failed: string
-  frightened: string
-  hovered: string
-  status: 'ongoing' | 'completed' | 'failed'
-  isFrightened: boolean
-} & Partial<typeof defaultProps>
-
-const defaultProps = createDefaultProps({
-  onClick: noop as (e: React.MouseEvent<HTMLDivElement>) => void,
-})
-
-const getProps = createPropsGetter(defaultProps)
+  status: GameStatus
+  isScared: boolean
+  smiley: string
+  happy: string
+  sad: string
+  scared: string
+  calm: string
+  onClick: (e: React.MouseEvent) => void
+}
 
 const Header: React.FC<Props> = (props) => {
   const {
-    classBlock,
-    ongoing,
-    completed,
-    failed,
-    frightened,
-    hovered,
     status,
-    isFrightened,
+    isScared,
+    smiley,
+    happy,
+    sad,
+    scared,
+    calm,
     onClick: handleClick,
-  } = getProps(props)
+  } = props
 
-  let face = ''
+  const [isCalm, setIsCalm] = useState(false)
 
-  if (status === 'completed') {
-    face = completed
+  let face = smiley
+
+  if (isCalm) {
+    face = calm
+  } else if (isScared) {
+    face = scared
   } else if (status === 'failed') {
-    face = failed
-  } else {
-    face = ongoing
-
-    if (isFrightened) {
-      face = frightened
-    }
+    face = sad
+  } else if (status === 'completed') {
+    face = happy
   }
 
   return (
-    <TwemojiContext.Consumer>
-      {(twemojiEnabled) => (
-        <div className={`${classBlock}__header`} onClick={handleClick}>
-          <Emoji className={`${classBlock}__status`} isTwemoji={twemojiEnabled}>
-            {face}
-          </Emoji>
-          <Emoji
-            className={`${classBlock}__status ${classBlock}__status--hovered`}
-            isTwemoji={twemojiEnabled}
-          >
-            {hovered}
-          </Emoji>
-        </div>
-      )}
-    </TwemojiContext.Consumer>
+    <div
+      className={`${classBlock}__header`}
+      onClick={handleClick}
+      onMouseEnter={() => setIsCalm(true)}
+      onMouseLeave={() => setIsCalm(false)}
+    >
+      <Emoji isTwemoji>{face}</Emoji>
+    </div>
   )
 }
-
-Header.defaultProps = defaultProps
 
 export default Header

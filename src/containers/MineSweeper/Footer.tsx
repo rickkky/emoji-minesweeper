@@ -1,21 +1,21 @@
 import React from 'react'
+import { classBlock } from './constants'
 
 type Props = {
-  classBlock: string
   bombNum: number
-  markedNum: number
+  markNum: number
   stepNum: number
   time: number
 }
 
 const Footer: React.FC<Props> = (props) => {
-  const { classBlock, bombNum, markedNum, stepNum, time } = props
+  const { bombNum, markNum, stepNum, time } = props
 
   return (
     <div className={`${classBlock}__footer`}>
       <div className={`${classBlock}__bomb-counter`}>
         <span>
-          {bombNum - markedNum} / {bombNum}
+          {bombNum - markNum} / {bombNum}
         </span>
         <span>BOMBS</span>
       </div>

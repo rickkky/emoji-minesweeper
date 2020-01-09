@@ -1,12 +1,12 @@
 import EventDispenser from 'event-dispenser'
 
-interface TickEvent {
+export interface TickEvent {
   time: number
   timeFlags: number[]
   startTime: number
 }
 
-interface StatusChangeEvent {
+export interface StatusChangeEvent {
   status: Status
   prevStatus: Status
 }
