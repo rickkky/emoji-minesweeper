@@ -1,0 +1,14 @@
+@import './variables.scss';
+
+.#{$class-block} {
+  display: inline-block;
+  padding: 0;
+  border: 4px solid $background-color--2nd;
+  border-radius: 5px;
+  background-color: $background-color;
+  user-select: none;
+
+  > div {
+    margin: 10px;
+  }
+}
