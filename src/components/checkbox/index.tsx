@@ -4,7 +4,7 @@ import {
   createDefaultProps,
   WithDefault,
 } from 'create-props-getter'
-import combineClassNames from 'combine-class-names'
+import { joinClassNames } from 'combine-class-names'
 import './Checkbox.scss'
 
 export interface CheckboxChangeEvent {
@@ -81,15 +81,11 @@ const Checkbox: React.FC<Props> = (props) => {
     ? checked
     : innerChecked
 
-  const containerClassName = combineClassNames(
-    className || '',
-    `${classBlock}`,
-    {
-      [`${classBlock}--checked`]: realChecked,
-      [`${classBlock}--indeterminate`]: indeterminate,
-      [`${classBlock}--disabled`]: !!disabled,
-    },
-  ).join(' ')
+  const containerClassName = joinClassNames(className, `${classBlock}`, {
+    [`${classBlock}--checked`]: realChecked,
+    [`${classBlock}--indeterminate`]: indeterminate,
+    [`${classBlock}--disabled`]: !!disabled,
+  })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (disabled) {

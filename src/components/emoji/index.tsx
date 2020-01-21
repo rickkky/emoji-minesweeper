@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 import { createPropsGetter, createDefaultProps } from 'create-props-getter'
 import twemoji from 'twemoji'
-import combineClassNames from 'combine-class-names'
+import { joinClassNames } from 'combine-class-names'
 import './Emoji.scss'
 
 type Props = {
@@ -50,9 +50,9 @@ const Emoji: React.FC<Props> = (props) => {
   return (
     <span
       key={key}
-      className={combineClassNames(className || '', 'emoji', {
+      className={joinClassNames(className || '', 'emoji', {
         'emoji--twemoji': isTwemoji,
-      }).join(' ')}
+      })}
       style={
         size
           ? {
