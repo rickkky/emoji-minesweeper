@@ -1,22 +1,22 @@
 {
   "files": {
     "main.css": "/emoji-minesweeper--react/static/css/main.6b531c86.chunk.css",
-    "main.js": "/emoji-minesweeper--react/static/js/main.f3a3eae5.chunk.js",
-    "main.js.map": "/emoji-minesweeper--react/static/js/main.f3a3eae5.chunk.js.map",
+    "main.js": "/emoji-minesweeper--react/static/js/main.e59c1f1c.chunk.js",
+    "main.js.map": "/emoji-minesweeper--react/static/js/main.e59c1f1c.chunk.js.map",
     "runtime-main.js": "/emoji-minesweeper--react/static/js/runtime-main.d14b45aa.js",
     "runtime-main.js.map": "/emoji-minesweeper--react/static/js/runtime-main.d14b45aa.js.map",
-    "static/js/2.b40c53a3.chunk.js": "/emoji-minesweeper--react/static/js/2.b40c53a3.chunk.js",
-    "static/js/2.b40c53a3.chunk.js.map": "/emoji-minesweeper--react/static/js/2.b40c53a3.chunk.js.map",
+    "static/js/2.db478301.chunk.js": "/emoji-minesweeper--react/static/js/2.db478301.chunk.js",
+    "static/js/2.db478301.chunk.js.map": "/emoji-minesweeper--react/static/js/2.db478301.chunk.js.map",
     "index.html": "/emoji-minesweeper--react/index.html",
-    "precache-manifest.8c89db9ffcd2fff219c679e82fcfbec4.js": "/emoji-minesweeper--react/precache-manifest.8c89db9ffcd2fff219c679e82fcfbec4.js",
+    "precache-manifest.c24bcd4a89d622624a67fbc572b4b31a.js": "/emoji-minesweeper--react/precache-manifest.c24bcd4a89d622624a67fbc572b4b31a.js",
     "service-worker.js": "/emoji-minesweeper--react/service-worker.js",
     "static/css/main.6b531c86.chunk.css.map": "/emoji-minesweeper--react/static/css/main.6b531c86.chunk.css.map",
-    "static/js/2.b40c53a3.chunk.js.LICENSE": "/emoji-minesweeper--react/static/js/2.b40c53a3.chunk.js.LICENSE"
+    "static/js/2.db478301.chunk.js.LICENSE": "/emoji-minesweeper--react/static/js/2.db478301.chunk.js.LICENSE"
   },
   "entrypoints": [
     "static/js/runtime-main.d14b45aa.js",
-    "static/js/2.b40c53a3.chunk.js",
+    "static/js/2.db478301.chunk.js",
     "static/css/main.6b531c86.chunk.css",
-    "static/js/main.f3a3eae5.chunk.js"
+    "static/js/main.e59c1f1c.chunk.js"
   ]
 }

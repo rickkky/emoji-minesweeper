@@ -1,23 +1,23 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "339c8bca94bd032c54bc9de780c1bcf7",
+    "revision": "620b5efb90b86945cbd04e31b1b4f631",
     "url": "/emoji-minesweeper--react/index.html"
   },
   {
-    "revision": "356481038645a316bb24",
+    "revision": "650b3ab82937b890967e",
     "url": "/emoji-minesweeper--react/static/css/main.6b531c86.chunk.css"
   },
   {
-    "revision": "c83e5976b91df07bfcea",
-    "url": "/emoji-minesweeper--react/static/js/2.b40c53a3.chunk.js"
+    "revision": "8bf81e616cc1f92d17a6",
+    "url": "/emoji-minesweeper--react/static/js/2.db478301.chunk.js"
   },
   {
     "revision": "4f6a8be427cef08f70ffea34aa565d61",
-    "url": "/emoji-minesweeper--react/static/js/2.b40c53a3.chunk.js.LICENSE"
+    "url": "/emoji-minesweeper--react/static/js/2.db478301.chunk.js.LICENSE"
   },
   {
-    "revision": "356481038645a316bb24",
-    "url": "/emoji-minesweeper--react/static/js/main.f3a3eae5.chunk.js"
+    "revision": "650b3ab82937b890967e",
+    "url": "/emoji-minesweeper--react/static/js/main.e59c1f1c.chunk.js"
   },
   {
     "revision": "46ddebdb9576aa752fcd",
