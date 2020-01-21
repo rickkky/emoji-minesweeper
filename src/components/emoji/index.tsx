@@ -5,7 +5,6 @@ import { joinClassNames } from 'combine-class-names'
 import './Emoji.scss'
 
 type Props = {
-  key?: string
   className?: string
   size?: number
 } & Partial<typeof defaultProps>
@@ -18,7 +17,7 @@ const defaultProps = createDefaultProps({
 const getProps = createPropsGetter(defaultProps)
 
 const Twemoji: React.FC<Props> = (props) => {
-  const { children, key } = getProps(props)
+  const { children } = getProps(props)
   const nodes: React.ReactNode[] = []
   let index = 0
 
@@ -28,7 +27,7 @@ const Twemoji: React.FC<Props> = (props) => {
     callback: (code: string, options: any) => {
       nodes.push(
         <img
-          key={`${key || ''}--${++index}`}
+          key={index++}
           className='emoji__twemoji'
           draggable='false'
           alt={twemoji.convert.fromCodePoint(code)}
@@ -45,11 +44,10 @@ const Twemoji: React.FC<Props> = (props) => {
 Twemoji.defaultProps = defaultProps
 
 const Emoji: React.FC<Props> = (props) => {
-  const { className, children, isTwemoji, key, size } = getProps(props)
+  const { className, children, isTwemoji, size } = getProps(props)
 
   return (
     <span
-      key={key}
       className={joinClassNames(className || '', 'emoji', {
         'emoji--twemoji': isTwemoji,
       })}
