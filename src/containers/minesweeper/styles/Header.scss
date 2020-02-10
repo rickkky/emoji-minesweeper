@@ -12,5 +12,9 @@
     font-size: 20px;
     text-align: center;
     cursor: pointer;
+
+    &:hover {
+      background-color: $background-color--2nd;
+    }
   }
 }

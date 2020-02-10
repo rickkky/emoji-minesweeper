@@ -8,6 +8,9 @@ const App: React.FC = () => {
     <div className='app'>
       <div className='app__content'>
         <Minesweeper />
+        <button className='setting-btn' type='button'>
+          <Emoji size={18}>{'🔧'}</Emoji>
+        </button>
       </div>
       <div className='app__footer'>
         <a
